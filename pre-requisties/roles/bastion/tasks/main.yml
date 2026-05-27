@@ -1,0 +1,54 @@
+# Create Praveen Security Group
+
+- name: Create Praveen Security Group
+  amazon.aws.ec2_security_group:
+    name: praveen-sg
+    description: Security group for provisioning server
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+
+    rules:
+      - proto: tcp
+        ports:
+          - 22
+        cidr_ip: 14.140.239.6/32
+
+    tags:
+      Name: praveen-sg
+      Purpose: provisioning-server
+
+  register: praveen_sg
+
+
+# Create Public Provisioning Server
+
+- name: Create Public Provisioning Server
+  amazon.aws.ec2_instance:
+    name: praveen-server
+    region: "{{ region }}"
+    key_name: "{{ key_name }}"
+    instance_type: "{{ instance_type }}"
+    image_id: "{{ ami_id }}"
+    wait: true
+    exact_count: 1
+    vpc_subnet_id: "{{ public_subnet_1 }}"
+
+    security_groups:
+      - "{{ praveen_sg.group_id | default(praveen_sg.security_group.group_id) }}"
+
+    network:
+      assign_public_ip: true
+
+    tags:
+      Name: praveen-server
+      Purpose: provisioning-server
+
+  register: praveen_instance
+
+
+
+# Show Public IP
+
+- name: Show Praveen Server Public IP
+  debug:
+    var: praveen_instance.instances[0].public_ip_address

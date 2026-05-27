@@ -1,0 +1,7 @@
+region: us-east-1
+instance_type: t2.micro
+key_name: praveen-tasks
+ami_id: ami-04b4f1a9cf54c11d0
+vpc_id: vpc-0c38cc0d937ccde74 
+
+public_subnet_1: subnet-09883e87fa05b1726
