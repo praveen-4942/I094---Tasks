@@ -1,0 +1,39 @@
+# Create ALB Security Group
+
+- name: Create ALB Security Group
+  amazon.aws.ec2_security_group:
+    name: alb-sg
+    description: Security group for ALB
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    rules:
+      - proto: tcp
+        ports:
+          - 80
+        cidr_ip: 14.140.239.6/32  #My IP_Address
+
+    tags: "{{ resource_tags }}"
+  register: alb_sg
+
+
+# Create EC2 Security Group
+
+- name: Create EC2 Security Group
+  amazon.aws.ec2_security_group:
+    name: ec2-sg
+    description: Security group for private EC2
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    rules:
+      - proto: tcp
+        ports:
+          - 80
+        group_id: "{{ alb_sg.group_id | default(alb_sg.security_group.group_id) }}"
+
+      - proto: tcp
+        ports:
+          - 22
+        cidr_ip: 172.68.0.147/32               #private ip of the provisioning server
+
+    tags: "{{ resource_tags }}"
+  register: ec2_sg

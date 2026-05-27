@@ -1,0 +1,16 @@
+- name: Create Target Group
+  community.aws.elb_target_group:
+
+    state: present
+    name: nginx-target-group
+    protocol: HTTP
+    port: 80
+
+    vpc_id: "{{ vpc_id }}"
+    target_type: instance
+    health_check_protocol: HTTP
+    health_check_path: /
+    region: "{{ region }}"
+    tags: "{{ resource_tags }}"
+
+  register: target_group

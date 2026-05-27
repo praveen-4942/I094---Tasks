@@ -1,0 +1,58 @@
+
+# ---------------------------------------------------------
+# Refresh apt cache
+# ---------------------------------------------------------
+
+- name: Refresh apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+
+# ---------------------------------------------------------
+# Install nginx
+# ---------------------------------------------------------
+
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+
+# ---------------------------------------------------------
+# Enable nginx service
+# ---------------------------------------------------------
+
+- name: Enable nginx
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: yes
+
+
+# ---------------------------------------------------------
+# Start nginx service
+# ---------------------------------------------------------
+
+- name: Start nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+
+
+# ---------------------------------------------------------
+# Verify nginx service
+# ---------------------------------------------------------
+
+- name: Check nginx service status
+  ansible.builtin.command: systemctl status nginx
+  register: nginx_status
+
+
+# ---------------------------------------------------------
+# Display nginx status
+# ---------------------------------------------------------
+
+- name: Show nginx status
+  debug:
+    var: nginx_status.stdout_lines
+
+

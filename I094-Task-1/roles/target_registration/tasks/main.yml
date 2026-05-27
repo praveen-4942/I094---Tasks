@@ -1,0 +1,19 @@
+# Register EC2 Instance 1 to Target Group
+
+- name: Register EC2 Instance 1
+  community.aws.elb_target:
+    target_group_arn: "{{ target_group.target_group_arn }}"
+    target_id: "{{ ec2_instance_1.instance_ids[0] }}"
+    target_port: 80
+    state: present
+    region: "{{ region }}"
+
+# Register EC2 Instance 2 to Target Group
+
+- name: Register EC2 Instance 2
+  community.aws.elb_target:
+    target_group_arn: "{{ target_group.target_group_arn }}"
+    target_id: "{{ ec2_instance_2.instance_ids[0] }}"
+    target_port: 80
+    state: present
+    region: "{{ region }}"
