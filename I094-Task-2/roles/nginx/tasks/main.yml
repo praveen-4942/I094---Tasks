@@ -1,0 +1,142 @@
+
+# ---------------------------------------------------------
+# Refresh apt cache
+# ---------------------------------------------------------
+
+- name: Refresh apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+
+# ---------------------------------------------------------
+# Install Docker
+# ---------------------------------------------------------
+
+- name: Install Docker
+  ansible.builtin.apt:
+    name: docker.io
+    state: present
+
+
+# ---------------------------------------------------------
+# Enable Docker service
+# ---------------------------------------------------------
+
+- name: Enable Docker
+  ansible.builtin.systemd:
+    name: docker
+    enabled: yes
+
+
+# ---------------------------------------------------------
+# Start Docker service
+# ---------------------------------------------------------
+
+- name: Start Docker
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+
+
+# ---------------------------------------------------------
+# Pull Docker Image
+# ---------------------------------------------------------
+
+- name: Pull hello image
+  ansible.builtin.command: docker pull nginxdemos/hello
+
+
+# ---------------------------------------------------------
+# Remove Existing Container If Present
+# ---------------------------------------------------------
+
+- name: Remove existing hello container
+  ansible.builtin.command: docker rm -f hello-app
+  ignore_errors: yes
+
+
+# ---------------------------------------------------------
+# Run Hello Container
+# ---------------------------------------------------------
+
+- name: Run hello container
+  ansible.builtin.command: >
+    docker run -d
+    --name hello-app
+    -p 8080:80
+    --restart always
+    nginxdemos/hello
+
+
+# ---------------------------------------------------------
+# Install nginx
+# ---------------------------------------------------------
+
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+
+# ---------------------------------------------------------
+# Configure nginx reverse proxy
+# ---------------------------------------------------------
+
+- name: Configure nginx reverse proxy
+  ansible.builtin.copy:
+    dest: /etc/nginx/sites-available/default
+    content: |
+      server {
+
+          listen 80;
+
+          location / {
+
+              proxy_pass http://127.0.0.1:8080;
+
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+          }
+      }
+
+
+# ---------------------------------------------------------
+# Enable nginx service
+# ---------------------------------------------------------
+
+- name: Enable nginx
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: yes
+
+
+# ---------------------------------------------------------
+# Restart nginx service
+# ---------------------------------------------------------
+
+- name: Restart nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
+
+
+# ---------------------------------------------------------
+# Verify nginx service
+# ---------------------------------------------------------
+
+- name: Check nginx service status
+  ansible.builtin.command: systemctl status nginx
+  register: nginx_status
+
+
+# ---------------------------------------------------------
+# Display nginx status
+# ---------------------------------------------------------
+
+- name: Show nginx status
+  debug:
+    var: nginx_status.stdout_lines
+
+

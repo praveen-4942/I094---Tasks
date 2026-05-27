@@ -1,0 +1,16 @@
+region: us-east-1
+instance_type: t2.micro
+key_name: praveen-tasks
+vpc_id: vpc-0c38cc0d937ccde74
+ami_id: ami-0c02fb55956c7d316
+
+public_subnet_1: subnet-09883e87fa05b1726 #collateral-baton-uat-public-subnet-us-east-1a
+public_subnet_2: subnet-0253d9609bed95119 #collateral-baton-uat-public-subnet-us-east-1b
+
+private_subnet_1: subnet-01df5ad4386e99aa9 #collateral-baton-uat-private-subnet-us-east-1a
+private_subnet_2: subnet-026e288a7dec36036 #collateral-baton-uat-private-subnet-us-east-1b
+
+resource_tags:
+  Purpose: learning-tasks
+  CreatedBy: praveenkumarg
+  Environment: training
